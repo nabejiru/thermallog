@@ -1,0 +1,39 @@
+version: "3"
+services:
+  app:
+    build:
+      context: ./ThermalLog/ThermalLog
+      dockerfile: Dockerfile
+    environment:
+      TZ: Asia/Tokyo
+      ConnectionStrings__DefaultConnection: "Data Source=mssql,1433;Initial Catalog=master;User ID=sa; Password=P@ssw0rd!!!;TrustServerCertificate=True;"
+    ports:
+      - 5000:5000
+    depends_on:
+      - mssql
+    volumes:
+      - ./docker/app/log:/app/log
+
+  mssql:
+    #image: mcr.microsoft.com/mssql/server:2019-latest
+    image: mssql
+    build:
+      context: ./docker/DB/
+      dockerfile: Dockerfile
+    container_name: sql-server-2019-express
+    ports: 
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssw0rd!!!
+      - MSSQL_PID=Express
+      - MSSQL_LCID=1041
+      - MSSQL_COLLECTION=Japanese_CI_AS
+      - TZ=Asia/Tokyo
+      - MSSQL_AGENT_ENABLED="true"
+      - DB_NAME=thermallog
+    volumes:
+      - ./docker/DB/initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/DB/DATA:/var/opt/mssql/data
+      - ./docker/DB/LOG:/var/opt/mssql/log
+      - ./docker/DB/secrets:/var/opt/mssql/sec

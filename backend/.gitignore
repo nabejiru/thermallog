@@ -1,0 +1,5 @@
+docker/app/log
+docker/DB/initdb.d/initdata
+docker/DB/LOG
+docker/DB/DATA
+docker/DB/secrets
